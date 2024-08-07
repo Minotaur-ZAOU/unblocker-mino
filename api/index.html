@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube to Invidious</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        #madeBy { position: absolute; bottom: 10px; left: 10px; }
+    </style>
+</head>
+<body>
+    <h1>YouTube to Invidious</h1>
+    <input type="text" id="youtubeUrl" placeholder="YouTubeのURLを入力">
+    <button onclick="convertUrl()">変換</button>
+    <br><br>
+    <iframe id="videoFrame" width="560" height="315" style="display:none;" frameborder="0" allowfullscreen></iframe>
+    <div id="madeBy">made by minotaur</div>
+    
+    <script>
+        async function convertUrl() {
+            const url = document.getElementById('youtubeUrl').value;
+            const response = await fetch('/api/convert', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ url }),
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                const videoFrame = document.getElementById('videoFrame');
+                videoFrame.src = data.invidiousUrl;
+                videoFrame.style.display = 'block';
+            } else {
+                alert('エラー: ' + (await response.json()).message);
+            }
+        }
+    </script>
+</body>
+</html>
